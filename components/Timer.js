@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 import PropTypes from 'prop-types'
 
 const TextTimer = (timer) => {
-    console.log(timer)
     return timer === 'workTime' ? 'breakTime' : 'workTime';
 }
 
@@ -31,15 +30,6 @@ export default class Timer extends Component {
     }
     
     secondsDec = () => {
-        //console.log('sec',this.state.seconds, this.state.minutes)
-        // if(this.state.seconds === 1 && this.state.minutes === '0'){
-        //     //clearInterval(this.intervalSeconds);
-        //     // this.setState( prevState => ({
-        //     //    timer: TextTimer(prevState.timer)
-        //     // }))
-        //     //this.onTimerHandler('Reset')
-        //     return false
-        // }
         if(this.state.seconds === 0){
             this.setState({ seconds: 59 });
             this.minutesDec();
@@ -49,12 +39,11 @@ export default class Timer extends Component {
     }
 
     minutesDec = () => {
-        //console.log('min',this.state.seconds, this.state.minutes)
         if(this.state.minutes === 0){
             this.setState(prevState => ({ 
                 minutes: (prevState.timer === 'workTime' ?  prevState.breakTime.mins : prevState.workTime.mins),
                 seconds: (prevState.timer === 'workTime' ?  prevState.breakTime.secs : prevState.workTime.secs),
-                timer: TextTimer(prevState.timer)//prevState.timer === 'workTime' ? 'breakTime' : 'workTime'
+                timer: TextTimer(prevState.timer)
             }));
         }else{
             this.setState((prevState) => { return { minutes: prevState.minutes - 1 } });
@@ -65,7 +54,6 @@ export default class Timer extends Component {
         const time = {...this.state[timer]};
         time[type] = Number(text);
         if(timer === this.state.timer) {
-            console.log(Number(time['secs']))
             this.setState({
                 [timer]: time,
                 btnType: 'Start',
@@ -105,11 +93,11 @@ export default class Timer extends Component {
     render() {
         const seconds = (
             this.state.seconds === 0 ? '00' : this.state.seconds < 10 ? '0' + this.state.seconds : this.state.seconds
-             
         );
+        const timerText = this.state.timer === 'workTime' ? 'Work Timer' : 'Break Timer';
         return (
             <View style={styles.view}>
-                <Text style={styles.text}>{ this.state.timer === 'workTime' ? 'Work Timer' : 'Break Timer'}</Text>
+                <Text style={styles.text}>{timerText}</Text>
                 <Text style={styles.timer}> {this.state.minutes === 0 ? '00' : this.state.minutes } : { seconds } </Text>
                 <View style={styles.buttonView}>
                     <Button title={this.state.btnType} onPress={() => this.onTimerHandler(this.state.btnType)} />
@@ -127,6 +115,7 @@ export default class Timer extends Component {
                             keyboardType='numeric'
                             style={styles.input} 
                             numeric
+                            returnKeyType="next" 
                             value={this.state.workTime.mins.toString()}
                             onChangeText={(text) => this.onChangeTimer(text,'workTime','mins')} 
                              />
